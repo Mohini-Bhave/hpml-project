@@ -8,8 +8,8 @@ wandb.init(mode="disabled")
 
 # Custom module imports
 from model.quantization import ModelQuantizer
-from model.student_train import train_student
-from model.teacher_train import train_teacher
+from model.student_train import train_student_model
+from model.teacher_train import train_teacher_model
 from evaluation.benchmark import ModelBenchmark  # Updated class name
 from model.distillation import perform_model_distillation
 from model.onnx_model import convert_to_onnx
@@ -29,8 +29,8 @@ student_training_subset = training_data["test"].select(range(1000))
 test_data = ag_news_dataset["test"]
 
 # Train models
-student_model = train_student("sentence-transformers/paraphrase-MiniLM-L3-v2", sampled_train_data)
-teacher_model = train_teacher("sentence-transformers/paraphrase-mpnet-base-v2", sampled_train_data)
+student_model = train_student_model("sentence-transformers/paraphrase-MiniLM-L3-v2", sampled_train_data)
+teacher_model = train_teacher_model("sentence-transformers/paraphrase-mpnet-base-v2", sampled_train_data)
 
 # Evaluate both models using the updated benchmark class
 benchmark_evaluator = ModelBenchmark(student_model, test_data)
