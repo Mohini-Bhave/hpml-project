@@ -33,13 +33,13 @@ student_model = train_student_model("sentence-transformers/paraphrase-MiniLM-L3-
 teacher_model = train_teacher_model("sentence-transformers/paraphrase-mpnet-base-v2", sampled_train_data)
 
 # Evaluate both models using the updated benchmark class
-benchmark_evaluator = ModelBenchmark(student_model, test_data)
+benchmark_evaluator = ModelBenchmark(student_model.model, test_data)
 student_benchmark = benchmark_evaluator.run_benchmark()
-benchmark_evaluator.model = teacher_model  # Update model in the evaluator for re-use
+benchmark_evaluator.model = teacher_model.model  # Update model in the evaluator for re-use
 teacher_benchmark = benchmark_evaluator.run_benchmark()
 
 # Perform and evaluate model distillation
-distilled_student_model = perform_model_distillation(student_model, teacher_model, student_training_subset)
+distilled_student_model = perform_model_distillation(student_model.model, teacher_model.model, student_training_subset)
 distilled_student_model.save_pretrained("distilled")
 
 # ONNX conversion for the distilled model
@@ -47,7 +47,7 @@ model_directory = Path("distilled")
 converted_model, converted_tokenizer = convert_to_onnx(model_directory)
 
 # Benchmarking non-quantized ONNX model
-onnx_benchmark_evaluator = ModelBenchmark(converted_model, test_data)
+onnx_benchmark_evaluator = ModelBenchmark(converted_model.model, test_data)
 non_quantized_benchmark = onnx_benchmark_evaluator.run_benchmark()
 
 # Quantize the ONNX model
